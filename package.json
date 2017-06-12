@@ -1,0 +1,21 @@
+{
+  "name": "gnrtr",
+  "version": "1.0.0",
+  "description": "config-based generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "generator"
+  ],
+  "author": "nazar m",
+  "license": "ISC",
+  "bin": {
+    "gnrtr": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0"
+  }
+}
