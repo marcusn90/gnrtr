@@ -1,0 +1,26 @@
+{
+    "groups": [
+        "component as c",
+        "modulecomponent as mc"
+    ],
+
+    "group_details": {
+        "c": {
+            "files": [
+                "<group_name>.controller.ts",
+                "<group_name>.component.ts",
+                "<group_name>.html",
+                "<group_name>.scss"
+            ]
+        },
+        "mc": {
+            "extend": "c",
+            "files": [
+                "<group_name>.module.ts"
+            ]
+        }
+    }
+
+    
+
+}
