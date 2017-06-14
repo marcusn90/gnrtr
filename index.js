@@ -10,8 +10,14 @@ const defaults = {
 };
 
 commander
-    .option('-c, --config <filename>', 'Specify config file')
-    .parse(process.argv);
+    .option('-c, --config <filename>', 'Specify config file');
+// commander
+//     .command('add <group_name>')
+//     .action( function ( groupName ) {
+//         console.log(groupName)
+//     })
+    
+commander.parse(process.argv);
 
 let configFile = commander.config || defaults.configFile;
 console.log(`Config file: ${chalk.bold.yellow( configFile )}`);
@@ -34,8 +40,39 @@ fs.open(configFile, 'r', ( err, fd ) => {
         }
 
         console.log(chalk.green('File content:'));
-        console.log(data);
+        // console.log(data);
+
+        try {
+            let cObj = JSON.parse(data);
+            processConfig(cObj);
+        } catch ( err ) {
+            console.log(err)
+        }
 
         fs.close(fd);
     });
-})
+});
+
+function processConfig ( cObj ) {
+    console.log(cObj);
+
+    if ( typeof cObj.groups !== 'undefined' ) {
+        cObj.groups.map( g => {
+            const parts = g.split(' as ');
+
+            return parts.length > 1 ? parts[1] : parts[0];
+        }).forEach( gNameArg => {
+            console.log(gNameArg);
+            commander
+                .command( `${gNameArg} <group_name>` )
+                .action( function ( groupName ) {
+                    console.log(`generate ${groupName} using conf:`);
+                    console.log(cObj.group_details[gNameArg]);
+                })
+        });
+    }
+
+    commander.parse(process.argv)
+
+    // console.log(process.argv);
+}
