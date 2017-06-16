@@ -1,7 +1,8 @@
 {
     "groups": [
         "component as c",
-        "modulecomponent as mc"
+        "modulecomponent as mc",
+        "tmpl"
     ],
 
     "group_details": {
@@ -17,6 +18,11 @@
             "extend": "c",
             "files": [
                 "<group_name>.module.ts"
+            ]
+        },
+        "tmpl": {
+            "files": [
+                "<group_name>.html"
             ]
         }
     }

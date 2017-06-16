@@ -61,18 +61,39 @@ function processConfig ( cObj ) {
             const parts = g.split(' as ');
 
             return parts.length > 1 ? parts[1] : parts[0];
-        }).forEach( gNameArg => {
-            console.log(gNameArg);
+        }).forEach( groupKey => {
+            // console.log(groupKey);
             commander
-                .command( `${gNameArg} <group_name>` )
+                .command( `${groupKey} <group_name>` )
                 .action( function ( groupName ) {
-                    console.log(`generate ${groupName} using conf:`);
-                    console.log(cObj.group_details[gNameArg]);
-                })
+                    getFilesToGenerate(cObj, groupKey, groupName);
+                });
         });
     }
 
     commander.parse(process.argv)
 
     // console.log(process.argv);
+}
+
+function getFilesToGenerate ( cObj, groupKey, groupName ) {
+    let files = [];
+
+    if ( cObj['group_details'] && cObj['group_details'][groupKey] ) {
+        let groupConf = cObj['group_details'][groupKey];
+        let hasExtend = groupConf.extend && [].concat(groupConf.extend).length;
+
+        if ( hasExtend ) {
+            [].concat(groupConf.extend).forEach( gKey => {
+                if ( cObj['group_details'][gKey] && cObj['group_details'][gKey]['files'] ) {
+                    files = files.concat(cObj['group_details'][gKey]['files']);
+                }
+            });
+        }
+
+        files = files.concat(groupConf['files']).map( fileName => fileName.replace('<group_name>', groupName));
+    }
+
+    console.log('Files:');
+    console.log(files)
 }
