@@ -68,7 +68,12 @@ function processConfig ( cObj ) {
             commander
                 .command( `${groupKey} <group_name>` )
                 .action( function ( groupName ) {
-                    createFiles(getFilesToGenerate(cObj, groupKey, groupName));
+                    createFiles(
+                        prepareNames(
+                            getFilesRecursively(cObj, groupKey),
+                            groupName
+                        )
+                    );
                 });
         });
     }
@@ -78,24 +83,41 @@ function processConfig ( cObj ) {
     // console.log(process.argv);
 }
 
-function getFilesToGenerate ( cObj, groupKey, groupName ) {
-    let files = [];
+function isGroupDefined ( cObj, groupKey ) {
+    return (cObj['group_details'] && cObj['group_details'][groupKey]);
+}
 
-    if ( cObj['group_details'] && cObj['group_details'][groupKey] ) {
-        let groupConf = cObj['group_details'][groupKey];
-        let hasExtend = groupConf.extend && [].concat(groupConf.extend).length;
+function hasFiles ( cObj, groupKey) {
+    return isGroupDefined ( cObj, groupKey ) && cObj['group_details'][groupKey]['files'] && cObj['group_details'][groupKey]['files'].length;
+}
+
+function getFilesRecursively ( cObj, groupKey ) {
+
+    let files = [];
+    
+    if ( isGroupDefined(cObj, groupKey) ) {
+
+        let groupConf = cObj['group_details'][groupKey],
+            hasExtend = groupConf.extend && [].concat(groupConf.extend).length;
+
+        files = files.concat( hasFiles(cObj, groupKey) ? groupConf['files'] : [] );
 
         if ( hasExtend ) {
-            [].concat(groupConf.extend).forEach( gKey => {
-                if ( cObj['group_details'][gKey] && cObj['group_details'][gKey]['files'] ) {
-                    files = files.concat(cObj['group_details'][gKey]['files']);
-                }
-            });
-        }
 
-        files = files.concat(groupConf['files'])
-            .map( fileName => fileName.replace('<group_name>', groupName));
+            [].concat(cObj['group_details'][groupKey].extend).forEach( gKey => {
+                files = files.concat(getFilesRecursively(cObj, gKey));
+            });
+
+        }
+        
     }
+
+    return files;
+    
+}
+
+function prepareNames ( filesList, groupName ) {
+    let files = filesList.map( fileName => fileName.replace('<group_name>', groupName));
 
     console.log('Files:');
     console.log(files);

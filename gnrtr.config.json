@@ -7,10 +7,10 @@
 
     "group_details": {
         "c": {
+            "extend": "tmpl",
             "files": [
                 "<group_name>.controller.ts",
                 "<group_name>.component.ts",
-                "<group_name>.html",
                 "<group_name>.scss"
             ]
         },
